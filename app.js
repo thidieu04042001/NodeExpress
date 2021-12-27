@@ -6,45 +6,16 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-var catalogRouter = require('./routes/catalog');
+var catalogRouter = require('./routes/catalog'); 
 
 var app = express();
 
-const { MongoClient } = require('mongodb');
+var mongoose = require('mongoose');
+var mongoDB = 'mongodb+srv://thidieu:thidieu@cluster0.w9bx6.mongodb.net/DieuData?retryWrites=true&w=majority';
+mongoose.connect(mongoDB, { useNewUrlParser: true , useUnifiedTopology: true});
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-async function main() {
-   
-    const uri = "mongodb://localhost:27017";
-
-    const client = new MongoClient(uri);
-
-    try {
-        // Connect to the MongoDB cluster
-        await client.connect();
-
-        // Make the appropriate DB calls
-        await listDatabases(client);
-
-    } catch (e) {
-        console.error(e);
-    } finally {
-        // Close the connection to the MongoDB cluster
-        await client.close();
-    }
-}
-
-main().catch(console.error);
-
-/**
- * Print the names of all available databases
- * @param {MongoClient} client A MongoClient that is connected to a cluster
- */
-async function listDatabases(client) {
-    databasesList = await client.db().admin().listDatabases();
-
-    console.log("Databases:");
-    databasesList.databases.forEach(db => console.log(` - ${db.name}`));
-};
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
